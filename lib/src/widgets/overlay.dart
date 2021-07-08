@@ -846,6 +846,7 @@ class _TapTarget extends StatelessWidget {
   final FeatureOverlayState state;
   final double transitionProgress;
   final Offset anchor;
+  final double scale;
   final Widget child;
   final Color color;
   final VoidCallback onPressed;
@@ -858,6 +859,7 @@ class _TapTarget extends StatelessWidget {
     required this.color,
     required this.state,
     required this.transitionProgress,
+    this.scale = 1,
   }) : super(key: key);
 
   double get opacity {
@@ -903,8 +905,8 @@ class _TapTarget extends StatelessWidget {
   Widget build(BuildContext context) => CenterAbout(
         position: anchor,
         child: Container(
-          height: 2 * radius,
-          width: 2 * radius,
+          height: 2 * radius * scale,
+          width: 2 * radius * scale,
           child: Opacity(
             opacity: opacity,
             child: RawMaterialButton(
