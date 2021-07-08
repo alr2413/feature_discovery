@@ -26,6 +26,12 @@ class DescribedFeatureOverlay extends StatefulWidget {
   /// for the same feature id, at once, you will have to set this to `true`.
   final bool allowShowingDuplicate;
 
+  /// The scale coefficient of target widget, defaults to 1.
+  final double scale;
+
+  /// Fill the entire background, defaults to false.
+  final bool fillBackground;
+
   /// The color of the large circle, where the text sits on.
   /// If null, defaults to [ThemeData.primaryColor].
   final Color? backgroundColor;
@@ -142,6 +148,8 @@ class DescribedFeatureOverlay extends StatefulWidget {
     required this.featureId,
     required this.tapTarget,
     this.backgroundColor,
+    this.scale = 1,
+    this.fillBackground = true,
     this.targetColor = Colors.white,
     this.textColor = Colors.white,
     this.title,
@@ -434,7 +442,7 @@ class _DescribedFeatureOverlayState extends State<DescribedFeatureOverlay>
   }
 
   bool _isCloseToTopOrBottom(Offset position) =>
-      position.dy <= 88.0 || (_screenSize.height - position.dy) <= 88.0;
+      position.dy <= 100.0 || (_screenSize.height - position.dy) <= 100.0;
 
   bool _isOnTopHalfOfScreen(Offset position) =>
       position.dy < (_screenSize.height / 2.0);
@@ -446,8 +454,10 @@ class _DescribedFeatureOverlayState extends State<DescribedFeatureOverlay>
   /// in order to match the transition progress and overlay state.
   double _backgroundRadius(Offset anchor) {
     final isBackgroundCentered = _isCloseToTopOrBottom(anchor);
-    final backgroundRadius = min(_screenSize.width, _screenSize.height) *
-        (isBackgroundCentered ? 1.0 : 0.7);
+    final backgroundRadius = widget.fillBackground
+        ? max(_screenSize.width, _screenSize.height) * 1.4
+        : min(_screenSize.width, _screenSize.height) *
+            (isBackgroundCentered ? 1.0 : 0.7);
     return backgroundRadius;
   }
 
@@ -582,7 +592,9 @@ class _DescribedFeatureOverlayState extends State<DescribedFeatureOverlay>
     final contentPosition = Offset(
       (dx.isNegative) ? 0.0 : dx,
       anchor.dy +
-          contentOffsetMultiplier * (44 + 20), // 44 is the tap target's radius.
+          contentOffsetMultiplier *
+              (44 + 20) *
+              widget.scale, // 44 is the tap target's radius.
     );
 
     Widget background = Container(
@@ -668,12 +680,14 @@ class _DescribedFeatureOverlayState extends State<DescribedFeatureOverlay>
           state: _state!,
           transitionProgress: _transitionProgress!,
           anchor: anchor,
+          scale: widget.scale,
           color: widget.targetColor,
         ),
         _TapTarget(
           state: _state!,
           transitionProgress: _transitionProgress!,
           anchor: anchor,
+          scale: widget.scale,
           color: widget.targetColor,
           onPressed: tryCompleteThis,
           child: widget.tapTarget,
@@ -783,6 +797,7 @@ class _Pulse extends StatelessWidget {
   final double transitionProgress;
   final Offset anchor;
   final Color color;
+  final double scale;
 
   const _Pulse({
     Key? key,
@@ -790,6 +805,7 @@ class _Pulse extends StatelessWidget {
     required this.transitionProgress,
     required this.anchor,
     required this.color,
+    this.scale = 1,
   }) : super(key: key);
 
   double get radius {
@@ -832,8 +848,8 @@ class _Pulse extends StatelessWidget {
       : CenterAbout(
           position: anchor,
           child: Container(
-            width: radius * 2,
-            height: radius * 2,
+            width: radius * 2 * scale,
+            height: radius * 2 * scale,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: color.withOpacity(opacity),

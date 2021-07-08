@@ -71,6 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 tapTarget: icon1,
                 backgroundColor: Colors.blue,
                 contentLocation: ContentLocation.below,
+                scale: 2,
+                overflowMode: OverflowMode.extendBackground,
                 title: const Text('Find the fastest route'),
                 description: const Text(
                     'Get car, walking, cycling, or public transit directions to this place'),
