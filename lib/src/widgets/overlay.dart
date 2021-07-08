@@ -455,7 +455,7 @@ class _DescribedFeatureOverlayState extends State<DescribedFeatureOverlay>
   double _backgroundRadius(Offset anchor) {
     final isBackgroundCentered = _isCloseToTopOrBottom(anchor);
     final backgroundRadius = widget.fillBackground
-        ? max(_screenSize.width, _screenSize.height) * 1.4
+        ? sqrt(pow(_screenSize.width, 2) + pow(_screenSize.height, 2))
         : min(_screenSize.width, _screenSize.height) *
             (isBackgroundCentered ? 1.0 : 0.7);
     return backgroundRadius;
